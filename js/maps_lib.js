@@ -21,29 +21,30 @@ var MapsLib = {
 
   //the encrypted Table ID of your Fusion Table (found under File => About)
   //NOTE: numeric IDs will be deprecated soon
-  fusionTableId:      "1m4Ez9xyTGfY2CU6O-UgEcPzlS0rnzLU93e4Faa0",
+  fusionTableId:      "1CYT_WtSsLw2ULuFEv8rdSB-MrTFAIRV5MRIK2AA",
 
   //*New Fusion Tables Requirement* API key. found at https://code.google.com/apis/console/
   //*Important* this key is for demonstration purposes. please register your own.
-  googleApiKey:       "AIzaSyA3FQFrNr5W2OEVmuENqhb2MBB2JabdaOY",
+  googleApiKey:       "AIzaSyDNLrzV7gKXTsqrVXoZtd8YCSHBFV16bd4",
 
   //name of the location column in your Fusion Table.
   //NOTE: if your location column name has spaces in it, surround it with single quotes
   //example: locationColumn:     "'my location'",
-  locationColumn:     "geometry",
+  locationColumn:     "col2",
 
-  map_centroid:       new google.maps.LatLng(41.8781136, -87.66677856445312), //center that your map defaults to
-  locationScope:      "chicago",      //geographical area appended to all address searches
-  recordName:         "result",       //for showing number of results
-  recordNamePlural:   "results",
+  map_centroid:       new google.maps.LatLng(35.97712,-94.497072), //center that your map defaults to
+  locationScope:      "",      //geographical area appended to all address searches
+  recordName:         "survey mark",       //for showing number of results
+  recordNamePlural:   "survey marks",
 
   searchRadius:       805,            //in meters ~ 1/2 mile
-  defaultZoom:        11,             //zoom level when map is loaded (bigger is more zoomed in)
+  defaultZoom:        4,             //zoom level when map is loaded (bigger is more zoomed in)
   addrMarkerImage:    'images/blue-pushpin.png', // set to empty '' to hide searched address marker
   currentPinpoint:    null,
 
   initialize: function() {
     $( "#result_count" ).html("");
+    $("#text_search").val("");
 
     geocoder = new google.maps.Geocoder();
     var myOptions = {
@@ -74,10 +75,62 @@ var MapsLib = {
     
     //-----custom initializers-------
     
+      //ranges for our slider
+        var minDate = moment("Aug 1 2001"); // Aug 1st 2001
+        var maxDate = moment(); //now
+      
+        //starting values
+        // var startDate = moment().subtract('months', 3); //past 3 months
+        var startDate = moment("Aug 1 2001"); 
+        var endDate = moment(); //now
+      
+        MapsLib.initializeDateSlider(minDate, maxDate, startDate, endDate, "days", 7);
+
     //-----end of custom initializers-------
 
     //run the default search
     MapsLib.doSearch();
+  },
+
+      initializeDateSlider: function(minDate, maxDate, startDate, endDate, stepType, step) {
+    var interval = MapsLib.sliderInterval(stepType);
+
+    $('#minDate').html(minDate.format('MMM YYYY'));
+    $('#maxDate').html(maxDate.format('MMM YYYY'));
+
+    $('#startDate').html(startDate.format('YYYY/MM/DD'));
+    $('#endDate').html(endDate.format('YYYY/MM/DD'));
+
+    $('#date-range').slider({
+      range: true,
+      step: step,
+      values: [ Math.floor((startDate.valueOf() - minDate.valueOf()) / interval), Math.floor((maxDate.valueOf() - minDate.valueOf()) / interval) ],
+        max: Math.floor((maxDate.valueOf() - minDate.valueOf()) / interval),
+        slide: function(event, ui) {
+            $('#startDate').html(minDate.clone().add(stepType, ui.values[0]).format('L'));
+            $('#endDate').html(minDate.clone().add(stepType, ui.values[1]).format('L'));
+        },
+        stop: function(event, ui) {
+          MapsLib.doSearch();
+        }
+    });
+  },
+
+  sliderInterval: function(interval) {
+    if (interval == "years")
+      return 365 * 24 * 3600 * 1000;
+    if (interval == "quarters")
+      return 3 * 30.4 * 24 * 3600 * 1000;
+    if (interval == "months") //this is very hacky. months have different day counts, so our point interval is the average - 30.4
+      return 30.4 * 24 * 3600 * 1000;
+    if (interval == "weeks")
+      return 7 * 24 * 3600 * 1000;
+    if (interval == "days")
+      return 24 * 3600 * 1000;
+    if (interval == "hours")
+      return 3600 * 1000;
+    else
+      return 1;
   },
 
   doSearch: function(location) {
@@ -89,6 +142,19 @@ var MapsLib = {
 
     //-----custom filters-------
 
+    whereClause += " AND 'Date' >= '" + $('#startDate').html() + "'";
+    whereClause += " AND 'Date' <= '" + $('#endDate').html() + "'";
+    var text_search = $("#text_search").val().replace("'", "\'");
+    if (text_search != '') {
+      whereClause += " AND 'Designation' contains ignoring case '" + text_search + "'";
+    }
+    var type_column = "'Status'";
+    var tempWhereClause = [];
+    if ( $("#cbType1").is(':checked')) tempWhereClause.push("Recovered");
+    if ( $("#cbType2").is(':checked')) tempWhereClause.push("Not Found");
+    if ( $("#cbType3").is(':checked')) tempWhereClause.push("Note Entered");
+    whereClause += " AND " + type_column + " IN ('" + tempWhereClause.join("','") + "')";
+    
     //-------end of custom filters--------
 
     if (address != "") {
@@ -155,8 +221,8 @@ var MapsLib = {
         select: MapsLib.locationColumn,
         where:  whereClause
       },
-      styleId: 2,
-      templateId: 2
+      styleId: 3,
+      templateId: 4
     });
     MapsLib.searchrecords.setMap(map);
     MapsLib.getCount(whereClause);
@@ -216,7 +282,7 @@ var MapsLib = {
       MapsLib.searchRadiusCircle = new google.maps.Circle(circleOptions);
   },
 
-  query: function(query_opts, callback) {
+    query: function(query_opts, callback) {
     
     var queryStr = [];
     queryStr.push("SELECT " + query_opts.select);
@@ -287,7 +353,7 @@ var MapsLib = {
     if (numRows == 1)
     name = MapsLib.recordName;
     $( "#result_box" ).fadeOut(function() {
-        $( "#result_count" ).html(MapsLib.addCommas(numRows) + " " + name + " found");
+        $( "#result_count" ).html(MapsLib.addCommas(numRows) + " " + name + " displayed");
       });
     $( "#result_box" ).fadeIn();
   },

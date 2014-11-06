@@ -26,3 +26,7 @@ a:hover { color: #4B58A6; }
 .filter-red { background-color: #FB6353; }
 
 canvas {-ms-touch-action: double-tap-zoom;}
+
+.container-fluid { padding-left: 0;}
+
+#control-buttons, #address-search, #status-checkbox, #date-slider { margin-top: 25px; }
