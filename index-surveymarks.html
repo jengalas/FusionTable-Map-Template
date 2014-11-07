@@ -34,14 +34,26 @@
                 <p>
                   <label>
                     within
-                    <select id='search_radius'>
-                      <option value='400'>2 blocks</option>
-                      <option value='805'>1/2 mile</option>
-                      <option value='1610'>1 mile</option>
+                    <select id='search_radius' class='form-control'>
+                      <option value='40250'>25 miles</option>
+                      <option value='16100'>10 miles</option>
+                      <option value='8050'>5 miles</option>
                       <option value='3220'>2 miles</option>
+                      <option value='1610'>1 mile</option>
                     </select>
                   </label>
                 </p>
+            </div>
+
+            <div id="control-buttons">
+              <a class='btn btn-primary' id='search' href='#'>
+                <i class='glyphicon glyphicon-search'></i>
+                Search
+              </a>
+              <a class='btn btn-default' id='reset' href='#'>
+                <i class='glyphicon glyphicon-repeat'></i>
+                Reset
+              </a>
             </div>
 
             <div id="status-checkbox">
@@ -81,19 +93,9 @@
               <div id="date-range"></div>
               <p class='pull-left' id='minDate'></p>
               <p class='pull-right' id='maxDate'></p>
+              <br>
             </div>
-            
-            <div id="control-buttons">
-              <a class='btn btn-primary' id='search' href='#'>
-                <i class='glyphicon glyphicon-search'></i>
-                Search
-              </a>
-              <a class='btn btn-default' id='reset' href='#'>
-                <i class='glyphicon glyphicon-repeat'></i>
-                Reset
-              </a>
-              </div>
-            </div>
+          </div>
 
             <div class='alert alert-info' id='result_box' ><strong id='result_count'></strong></div>
           </div>

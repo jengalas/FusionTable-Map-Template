@@ -37,7 +37,7 @@ var MapsLib = {
   recordName:         "survey mark",       //for showing number of results
   recordNamePlural:   "survey marks",
 
-  searchRadius:       805,            //in meters ~ 1/2 mile
+  searchRadius:       40250,            //in meters ~ 1/2 mile
   defaultZoom:        4,             //zoom level when map is loaded (bigger is more zoomed in)
   addrMarkerImage:    'images/blue-pushpin.png', // set to empty '' to hide searched address marker
   currentPinpoint:    null,
