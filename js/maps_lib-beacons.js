@@ -37,13 +37,14 @@ var MapsLib = {
   recordName:         "beacon",       //for showing number of results
   recordNamePlural:   "beacons",
 
-  searchRadius:       805,            //in meters ~ 1/2 mile
+  searchRadius:       161000,            //in meters ~ 1/2 mile
   defaultZoom:        4,             //zoom level when map is loaded (bigger is more zoomed in)
   addrMarkerImage:    'images/blue-pushpin.png', // set to empty '' to hide searched address marker
   currentPinpoint:    null,
 
   initialize: function() {
     $( "#result_count" ).html("");
+    $("#text_search").val("");
 
     geocoder = new google.maps.Geocoder();
     var myOptions = {
@@ -88,6 +89,11 @@ var MapsLib = {
     var whereClause = MapsLib.locationColumn + " not equal to ''";
 
     //-----custom filters-------
+
+    var text_search = $("#text_search").val().replace("'", "\\'");
+    if (text_search != '') {
+      whereClause += " AND 'Designation' contains ignoring case '" + text_search + "'";
+    }
 
     //-------end of custom filters--------
 
