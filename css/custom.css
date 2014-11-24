@@ -9,11 +9,9 @@ a:hover { color: #4B58A6; }
   height: 15px; 
   width: 15px;  
   display: inline-block;
-  *border-right-width: 2px;
-  *border-bottom-width: 2px;
-  -webkit-border-radius: 5px;
-     -moz-border-radius: 5px;
-          border-radius: 5px;
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box; 
@@ -24,6 +22,8 @@ a:hover { color: #4B58A6; }
 .filter-blue { background-color: #5781FC; }
 .filter-purple { background-color: #7C54FB; }
 .filter-red { background-color: #FB6353; }
+.filter-turquoise { background-color: #99ffff; }
+.filter-lavender { background-color: #ff97ff; }
 
 canvas {-ms-touch-action: double-tap-zoom;}
 
